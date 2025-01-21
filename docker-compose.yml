@@ -1,0 +1,23 @@
+version: "3.8"
+services:
+  write-db:
+    image: postgres
+    ports:
+    - "5432:5432"
+    environment:
+      POSTGRES_PASSWORD: postgres
+  read-db:
+    image: mongo
+    ports:
+      - 27017:27017
+    environment:
+      - MONGODB_DATABASE='vf-read-db'
+  event-store:
+    image: mongo:6.0.0
+    ports:
+      - 27018:27017
+    environment:
+      - MONGODB_DATABASE='vf-event-store'
+    command: mongod --replSet vf-event-store-repl-set
+    volumes:
+      - ./scripts/init-replica-set.sh:/docker-entrypoint-initdb.d/init-replica-set.sh
